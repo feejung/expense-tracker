@@ -47,6 +47,11 @@ header{background:var(--green);border-radius:18px;padding:1.4rem 1.6rem;margin-b
 .kpi.inc .kpi-lbl{color:#0F6E56}.kpi.exp .kpi-lbl{color:#854F0B}.kpi.bal-p .kpi-lbl{color:#9FC4B7}.kpi.bal-n .kpi-lbl{color:#854F0B}
 .kpi-val{font-size:21px;font-weight:500;font-family:'Playfair Display',serif}
 .kpi.inc .kpi-val{color:#085041}.kpi.exp .kpi-val{color:#633806}.kpi.bal-p .kpi-val{color:#fff}.kpi.bal-n .kpi-val{color:#633806}
+.kpi-val-wrap{display:flex;align-items:center;justify-content:space-between}
+.eye-btn{background:none;border:none;cursor:pointer;opacity:.6;padding:2px;display:flex;align-items:center;font-size:16px}
+.kpi.inc .eye-btn{color:#085041}.kpi.exp .eye-btn{color:#633806}.kpi.bal-p .eye-btn{color:#D4E9E2}.kpi.bal-n .eye-btn{color:#633806}
+.eye-btn:hover{opacity:1}
+.kpi-hidden{letter-spacing:3px;font-size:14px;opacity:.5}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.2rem}
 .panel{background:#fff;border-radius:14px;padding:1rem 1.1rem;border:1px solid var(--green-light)}
 .panel-title{font-size:13px;font-weight:500;color:var(--green);margin-bottom:.85rem;display:flex;align-items:center;gap:6px}
@@ -77,6 +82,19 @@ input:focus,select:focus{outline:none;box-shadow:0 0 0 2px var(--green-light);ba
 .b-insurance{background:#FEF9E7;color:#7D6608}.b-tax{background:#FDEDEC;color:#922B21}
 .b-coffee{background:#F5EDD6;color:#6F3A10}
 .amt-pos{color:#085041;font-weight:500;text-align:right}.amt-neg{color:#854F0B;font-weight:500;text-align:right}
+.cat-bar-row{cursor:pointer;border-radius:8px;padding:4px 6px;margin:0 -6px 5px;transition:.15s}
+.cat-bar-row:hover{background:var(--green-light)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal{background:#fff;border-radius:18px;width:100%;max-width:500px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-header{background:var(--green);padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between}
+.modal-title{color:#fff;font-size:15px;font-weight:500;font-family:"Playfair Display",serif}
+.modal-total{color:#9FC4B7;font-size:13px}
+.modal-close{background:none;border:none;color:#9FC4B7;font-size:20px;cursor:pointer;padding:2px;display:flex;align-items:center;border-radius:6px}
+.modal-close:hover{color:#fff;background:var(--green-mid)}
+.modal-body{overflow-y:auto;padding:.8rem 1.1rem}
+.modal-row{display:grid;grid-template-columns:60px 1fr 76px 28px;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid var(--cream-dark);font-size:13px}
+.modal-row:last-child{border-bottom:none}
+.modal-empty{text-align:center;padding:2rem;color:var(--muted);font-size:13px}
 .del-btn{background:none;border:none;cursor:pointer;color:#C5D9D4;font-size:15px;display:flex;align-items:center;border-radius:4px;padding:2px}
 .del-btn:hover{color:var(--red-text);background:var(--red-bg)}
 .empty-state{text-align:center;padding:2rem;color:var(--muted);font-size:13px;line-height:2}
@@ -146,9 +164,9 @@ input:focus,select:focus{outline:none;box-shadow:0 0 0 2px var(--green-light);ba
 <!-- EXPENSE TAB -->
 <div class="section" id="sec-expense">
   <div class="kpi-row">
-    <div class="kpi inc"><div class="kpi-lbl"><i class="ti ti-trending-up" style="font-size:13px"></i> รายรับ</div><div class="kpi-val" id="kpi-inc">฿0</div></div>
-    <div class="kpi exp"><div class="kpi-lbl"><i class="ti ti-trending-down" style="font-size:13px"></i> รายจ่าย</div><div class="kpi-val" id="kpi-exp">฿0</div></div>
-    <div class="kpi bal-p" id="kpi-bal-card"><div class="kpi-lbl"><i class="ti ti-wallet" style="font-size:13px"></i> คงเหลือ</div><div class="kpi-val" id="kpi-bal">฿0</div></div>
+    <div class="kpi inc"><div class="kpi-lbl"><i class="ti ti-trending-up" style="font-size:13px"></i> รายรับ</div><div class="kpi-val-wrap"><div class="kpi-val" id="kpi-inc">••••</div><button class="eye-btn" onclick="toggleKpi('inc')" id="eye-inc"><i class="ti ti-eye"></i></button></div></div>
+    <div class="kpi exp"><div class="kpi-lbl"><i class="ti ti-trending-down" style="font-size:13px"></i> รายจ่าย</div><div class="kpi-val-wrap"><div class="kpi-val" id="kpi-exp">••••</div><button class="eye-btn" onclick="toggleKpi('exp')" id="eye-exp"><i class="ti ti-eye"></i></button></div></div>
+    <div class="kpi bal-p" id="kpi-bal-card"><div class="kpi-lbl"><i class="ti ti-wallet" style="font-size:13px"></i> คงเหลือ</div><div class="kpi-val-wrap"><div class="kpi-val" id="kpi-bal">••••</div><button class="eye-btn" onclick="toggleKpi('bal')" id="eye-bal"><i class="ti ti-eye"></i></button></div></div>
   </div>
   <div class="two-col">
     <div class="panel">
@@ -163,7 +181,7 @@ input:focus,select:focus{outline:none;box-shadow:0 0 0 2px var(--green-light);ba
   <div class="form-panel">
     <div class="panel-title"><i class="ti ti-circle-plus" style="font-size:14px"></i> เพิ่มรายการ</div>
     <div class="fg fg2">
-      <div><label class="field-label">วันที่</label><input type="date" id="inp-date"></div>
+      <div><label class="field-label">วันที่ (DD/MM/YYYY)</label><input type="text" id="inp-date" placeholder="เช่น 11/06/2569" maxlength="10"></div>
       <div><label class="field-label">ประเภท</label><select id="inp-type"><option value="expense">รายจ่าย</option><option value="income">รายรับ</option></select></div>
     </div>
     <div class="fg fg2">
@@ -202,6 +220,20 @@ input:focus,select:focus{outline:none;box-shadow:0 0 0 2px var(--green-light);ba
   </div>
 </div>
 
+</div>
+
+<!-- CATEGORY MODAL -->
+<div class="modal-overlay" id="cat-modal" style="display:none" onclick="closeCatModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modal-title">รายการ</div>
+        <div class="modal-total" id="modal-total"></div>
+      </div>
+      <button class="modal-close" onclick="closeCatModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
 </div>
 
 <script type="module">
@@ -317,14 +349,15 @@ function renderExpense(){
   const sorted=[...filtered].sort((a,b)=>b.date.localeCompare(a.date));
   let inc=0,exp=0; filtered.forEach(i=>{ if(i.type==='income') inc+=Number(i.amount); else exp+=Number(i.amount); });
   const bal=inc-exp;
-  document.getElementById('kpi-inc').textContent=fmt(inc);
-  document.getElementById('kpi-exp').textContent=fmt(exp);
-  document.getElementById('kpi-bal').textContent=fmt(Math.abs(bal));
+  window._kpiVals={inc:fmt(inc),exp:fmt(exp),bal:fmt(Math.abs(bal))};
+  if(kpiVisible.inc) document.getElementById('kpi-inc').textContent=fmt(inc);
+  if(kpiVisible.exp) document.getElementById('kpi-exp').textContent=fmt(exp);
+  if(kpiVisible.bal) document.getElementById('kpi-bal').textContent=fmt(Math.abs(bal));
   document.getElementById('kpi-bal-card').className='kpi '+(bal>=0?'bal-p':'bal-n');
   document.getElementById('top-sub').textContent=fm?(()=>{ const[y,mo]=fm.split('-'); return `${moTH[parseInt(mo)]} ${parseInt(y)+543}`; })():'ภาพรวมทั้งหมด';
   const catTot={}; filtered.filter(i=>i.type==='expense').forEach(i=>{ catTot[i.category]=(catTot[i.category]||0)+Number(i.amount); });
   const sc=Object.entries(catTot).sort((a,b)=>b[1]-a[1]),maxC=sc[0]?sc[0][1]:1;
-  document.getElementById('cat-bars').innerHTML=!sc.length?'<div style="text-align:center;padding:1rem;color:#9FC4B7;font-size:12px">ยังไม่มีรายจ่ายค่ะ</div>':sc.slice(0,6).map(([cat,amt])=>`<div class="cat-bar-row"><div class="cat-bar-lbl"><span>${(CATS[cat]||CATS.other).label}</span><span>${fmt(amt)}</span></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.round(amt/maxC*100)}%"></div></div></div>`).join('');
+  document.getElementById('cat-bars').innerHTML=!sc.length?'<div style="text-align:center;padding:1rem;color:#9FC4B7;font-size:12px">ยังไม่มีรายจ่ายค่ะ</div>':sc.slice(0,6).map(([cat,amt])=>`<div class="cat-bar-row" onclick="openCatModal('${cat}')"><div class="cat-bar-lbl"><span>${(CATS[cat]||CATS.other).label}</span><span style="display:flex;align-items:center;gap:4px">${fmt(amt)} <i class="ti ti-chevron-right" style="font-size:11px;color:var(--muted)"></i></span></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.round(amt/maxC*100)}%"></div></div></div>`).join('');
   const dm={}; filtered.filter(i=>i.type==='expense').forEach(i=>{ dm[i.date]=(dm[i.date]||0)+Number(i.amount); });
   const days=Object.keys(dm).sort().slice(-14);
   if(barChart){ barChart.destroy(); barChart=null; }
@@ -337,12 +370,15 @@ function renderExpense(){
 window.renderExpense=renderExpense;
 
 window.addItem=async function(){
-  const date=document.getElementById('inp-date').value;
+  const rawDate=document.getElementById('inp-date').value.trim();
   const type=document.getElementById('inp-type').value;
   const desc=document.getElementById('inp-desc').value.trim();
   const amount=parseFloat(document.getElementById('inp-amount').value);
   const category=document.getElementById('inp-cat').value;
-  if(!date){alert('กรุณาเลือกวันที่ค่ะ');return;}
+  if(!rawDate){alert('กรุณากรอกวันที่ค่ะ');return;}
+  const dp=rawDate.split('/');
+  if(dp.length!==3||dp[0].length<1||dp[1].length<1||dp[2].length<4){alert('รูปแบบวันที่ไม่ถูกต้องค่ะ ใช้ DD/MM/YYYY เช่น 11/06/2569');return;}
+  const date=`${parseInt(dp[2])-543}-${dp[1].padStart(2,'0')}-${dp[0].padStart(2,'0')}`;
   if(!desc){alert('กรุณากรอกรายละเอียดค่ะ');return;}
   if(!amount||amount<=0){alert('กรุณากรอกจำนวนเงินให้ถูกต้องค่ะ');return;}
   try{
@@ -370,8 +406,35 @@ onSnapshot(collection(db,'cards'), snap=>{
 }, ()=>setSyncStatus('err'));
 
 const t=new Date();
-document.getElementById('inp-date').value=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+document.getElementById('inp-date').value=`${String(t.getDate()).padStart(2,'0')}/${String(t.getMonth()+1).padStart(2,'0')}/${t.getFullYear()+543}`;
+const kpiVisible={inc:false,exp:false,bal:false};
+window.toggleKpi=function(key){
+  kpiVisible[key]=!kpiVisible[key];
+  const el=document.getElementById('kpi-'+key);
+  const btn=document.getElementById('eye-'+key);
+  const vals=window._kpiVals||{inc:'฿0',exp:'฿0',bal:'฿0'};
+  el.textContent=kpiVisible[key]?vals[key]:'••••';
+  btn.innerHTML=kpiVisible[key]?'<i class="ti ti-eye-off"></i>':'<i class="ti ti-eye"></i>';
+};
 setInterval(()=>{ renderNotifications(); renderCards(); },60000);
+
+window.openCatModal=function(cat){
+  const fm=document.getElementById('filter-month').value;
+  const filtered=(fm?items.filter(i=>i.date&&i.date.startsWith(fm)):items).filter(i=>i.type==='expense'&&i.category===cat);
+  const sorted=[...filtered].sort((a,b)=>b.date.localeCompare(a.date));
+  const total=filtered.reduce((s,i)=>s+Number(i.amount),0);
+  const info=CATS[cat]||CATS.other;
+  document.getElementById('modal-title').textContent=info.label;
+  document.getElementById('modal-total').textContent='รวม '+fmt(total)+' · '+filtered.length+' รายการ';
+  document.getElementById('modal-body').innerHTML=!sorted.length
+    ?'<div class="modal-empty">ไม่มีรายการค่ะ</div>'
+    :sorted.map(i=>`<div class="modal-row"><span style="color:var(--muted)">${fmtDate(i.date)}</span><span>${i.desc||'-'}</span><span class="amt-neg" style="text-align:right">-${fmt(i.amount)}</span><button class="del-btn" onclick="delItem('${i.id}');closeCatModal()" aria-label="ลบ"><i class="ti ti-trash"></i></button></div>`).join('');
+  document.getElementById('cat-modal').style.display='flex';
+};
+
+window.closeCatModal=function(e){
+  if(!e||e.target===document.getElementById('cat-modal')) document.getElementById('cat-modal').style.display='none';
+};
 </script>
 </body>
 </html>
