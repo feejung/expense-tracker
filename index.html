@@ -181,7 +181,7 @@ input:focus,select:focus{outline:none;box-shadow:0 0 0 2px var(--green-light);ba
   <div class="form-panel">
     <div class="panel-title"><i class="ti ti-circle-plus" style="font-size:14px"></i> เพิ่มรายการ</div>
     <div class="fg fg2">
-      <div><label class="field-label">วันที่ (DD/MM/YYYY)</label><input type="text" id="inp-date" placeholder="เช่น 11/06/2569" maxlength="10"></div>
+      <div><label class="field-label">วันที่</label><input type="date" id="inp-date"></div>
       <div><label class="field-label">ประเภท</label><select id="inp-type"><option value="expense">รายจ่าย</option><option value="income">รายรับ</option></select></div>
     </div>
     <div class="fg fg2">
@@ -272,7 +272,7 @@ function setSyncStatus(s){
 }
 
 function fmt(n){ return '฿'+Number(n).toLocaleString('th-TH',{minimumFractionDigits:0,maximumFractionDigits:0}); }
-function fmtDate(d){ if(!d) return ''; const p=d.split('-'); return `${p[2]}/${p[1]}`; }
+function fmtDate(d){ if(!d) return ''; const p=d.split('-'); return `${p[2]}/${p[1]}/${parseInt(p[0])+543}`; }
 function getMonths(){ const s=new Set(); items.forEach(i=>{ if(i.date) s.add(i.date.slice(0,7)); }); return Array.from(s).sort().reverse(); }
 function getDaysUntilDue(dueDay){ const now=new Date(),due=new Date(now.getFullYear(),now.getMonth(),dueDay); if(due<now) due.setMonth(due.getMonth()+1); return Math.ceil((due-now)/864e5); }
 
@@ -370,15 +370,12 @@ function renderExpense(){
 window.renderExpense=renderExpense;
 
 window.addItem=async function(){
-  const rawDate=document.getElementById('inp-date').value.trim();
+  const date=document.getElementById('inp-date').value;
   const type=document.getElementById('inp-type').value;
   const desc=document.getElementById('inp-desc').value.trim();
   const amount=parseFloat(document.getElementById('inp-amount').value);
   const category=document.getElementById('inp-cat').value;
-  if(!rawDate){alert('กรุณากรอกวันที่ค่ะ');return;}
-  const dp=rawDate.split('/');
-  if(dp.length!==3||dp[0].length<1||dp[1].length<1||dp[2].length<4){alert('รูปแบบวันที่ไม่ถูกต้องค่ะ ใช้ DD/MM/YYYY เช่น 11/06/2569');return;}
-  const date=`${parseInt(dp[2])-543}-${dp[1].padStart(2,'0')}-${dp[0].padStart(2,'0')}`;
+  if(!date){alert('กรุณาเลือกวันที่ค่ะ');return;}
   if(!desc){alert('กรุณากรอกรายละเอียดค่ะ');return;}
   if(!amount||amount<=0){alert('กรุณากรอกจำนวนเงินให้ถูกต้องค่ะ');return;}
   try{
@@ -406,7 +403,7 @@ onSnapshot(collection(db,'cards'), snap=>{
 }, ()=>setSyncStatus('err'));
 
 const t=new Date();
-document.getElementById('inp-date').value=`${String(t.getDate()).padStart(2,'0')}/${String(t.getMonth()+1).padStart(2,'0')}/${t.getFullYear()+543}`;
+document.getElementById('inp-date').value=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
 const kpiVisible={inc:false,exp:false,bal:false};
 window.toggleKpi=function(key){
   kpiVisible[key]=!kpiVisible[key];
